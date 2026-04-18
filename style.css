@@ -1,1 +1,53 @@
+body {
+  margin: 0;
+  background: black;
+  font-family: Georgia, serif;
+  overflow: hidden;
+}
 
+.hidden { display: none; }
+
+#bg {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.75);
+}
+
+#sprites {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 5%;
+}
+
+#sprites img {
+  height: 70vh;
+  opacity: 0.3;
+  transition: 0.3s;
+}
+
+#ui {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  color: white;
+  padding: 20px;
+}
+
+#speaker {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+#text {
+  min-height: 80px;
+}
+
+#choices button {
+  display: block;
+  margin: 5px 0;
+}
