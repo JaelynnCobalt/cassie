@@ -13,6 +13,7 @@ const sprites = {
 };
 
 const backgrounds = {
+    // Updated to .jpg to match your GitHub screenshot
     temple: "assets/temple-bg.jpg",
     marble: "assets/marble-bg.jpg"
 };
@@ -35,7 +36,6 @@ function setBackground(key) {
 }
 
 function setSprites(active) {
-    // Show/Hide based on who is speaking
     if (active === "cassandra") {
         cassandra.classList.add("active");
         cassandra.classList.remove("inactive");
@@ -80,9 +80,8 @@ function render() {
     const node = story[state.node];
     const line = node.lines[state.line];
 
-    // Reset UI
     choicesEl.classList.add("hidden");
-    nextBtnContainer.classList.remove("hidden");
+    if (nextBtnContainer) nextBtnContainer.classList.remove("hidden");
 
     if (!line) return;
 
@@ -100,16 +99,14 @@ function next() {
 
     const story = getStory();
     const node = story[state.node];
-
     state.line++;
 
     if (state.line >= node.lines.length) {
         if (node.choices && node.choices.length > 0) {
             renderChoices();
         } else {
-            // End of game or loop
             textEl.textContent = "The End.";
-            nextBtnContainer.classList.add("hidden");
+            if (nextBtnContainer) nextBtnContainer.classList.add("hidden");
         }
     } else {
         render();
@@ -120,7 +117,7 @@ function renderChoices() {
     const story = getStory();
     const node = story[state.node];
 
-    nextBtnContainer.classList.add("hidden");
+    if (nextBtnContainer) nextBtnContainer.classList.add("hidden");
     choicesEl.classList.remove("hidden");
     choicesEl.innerHTML = "";
 
@@ -149,13 +146,14 @@ document.addEventListener("keydown", e => {
 });
 
 window.addEventListener("load", () => {
-    // Set initial sources
     cassandra.src = sprites.cassandra;
     apollo.src = sprites.apollo;
 
     setTimeout(() => {
-        document.getElementById("loading-screen").style.display = "none";
-        document.getElementById("app").classList.remove("hidden");
+        const loader = document.getElementById("loading-screen");
+        const app = document.getElementById("app");
+        if (loader) loader.style.display = "none";
+        if (app) app.classList.remove("hidden");
         render();
-    }, 1000);
+    }, 500);
 });
