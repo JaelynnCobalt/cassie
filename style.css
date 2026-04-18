@@ -1,53 +1,132 @@
-body {
-  margin: 0;
-  background: black;
-  font-family: Georgia, serif;
-  overflow: hidden;
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    font-family: 'Georgia', serif;
+    overflow: hidden;
 }
 
-.hidden { display: none; }
+.hidden { display: none !important; }
 
-#bg {
-  position: fixed;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  filter: brightness(0.75);
+/* Loading Screen */
+#loading-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.pulse { animation: pulse 1.5s infinite; width: 100px; }
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.5; }
 }
 
-#sprites {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  padding: 0 5%;
+/* Background */
+#background {
+    position: fixed;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: background-image 0.8s ease-in-out;
+    filter: brightness(0.6);
+    z-index: 1;
 }
 
-#sprites img {
-  height: 70vh;
-  opacity: 0.3;
-  transition: 0.3s;
+/* Sprites */
+#spriteLayer {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    z-index: 2;
+    pointer-events: none;
+}
+.sprite {
+    height: 85vh;
+    transition: all 0.4s ease;
+    filter: grayscale(0.5) brightness(0.5);
+    opacity: 0;
+}
+.sprite.active {
+    filter: grayscale(0) brightness(1);
+    opacity: 1;
+    transform: scale(1.05);
+}
+.sprite.inactive {
+    filter: grayscale(0.8) brightness(0.3);
+    opacity: 0.6;
 }
 
+/* UI & Dialogue */
 #ui {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  color: white;
-  padding: 20px;
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 10;
 }
 
-#speaker {
-  font-weight: bold;
-  margin-bottom: 10px;
+#dialogueBox {
+    width: 80%;
+    max-width: 900px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #d4af37;
+    padding: 25px;
+    color: white;
+    min-height: 120px;
+    position: relative;
 }
 
-#text {
-  min-height: 80px;
+#speakerName {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #d4af37;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
-#choices button {
-  display: block;
-  margin: 5px 0;
+#dialogueText {
+    font-size: 1.2rem;
+    line-height: 1.5;
+    margin-bottom: 40px;
+}
+
+/* Choices & Next Button */
+#bottomBar {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+}
+
+#nextSun {
+    width: 50px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+#nextSun:hover { transform: rotate(45deg) scale(1.1); }
+
+#choices {
+    display: flex;
+    gap: 10px;
+}
+
+.choice-btn {
+    background: #d4af37;
+    border: none;
+    padding: 10px 20px;
+    color: black;
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.choice-btn:hover {
+    background: white;
+    transform: translateY(-2px);
 }
