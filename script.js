@@ -1,11 +1,11 @@
-const bg = document.getElementById("bg");
-const apollo = document.getElementById("apollo");
-const cassandra = document.getElementById("cassandra");
+const bg = document.getElementById("background");
+const cassandra = document.getElementById("cassandraSprite");
+const apollo = document.getElementById("apolloSprite");
 
-const speaker = document.getElementById("speaker");
-const text = document.getElementById("text");
-const choices = document.getElementById("choices");
-const next = document.getElementById("next");
+const nameEl = document.getElementById("speakerName");
+const textEl = document.getElementById("dialogueText");
+const choicesEl = document.getElementById("choices");
+const nextBtn = document.getElementById("nextSun");
 
 const sprites = {
   apollo: "assets/apollo.png",
@@ -17,106 +17,157 @@ const backgrounds = {
   marble: "assets/marble-bg.jpg"
 };
 
-let node = "start";
-let line = 0;
-let typing = false;
-let skip = false;
+let state = {
+  node: "start",
+  line: 0,
+  typing: false,
+  skip: false
+};
 
-function render() {
-  const scene = window.STORY[node];
-  const data = scene.lines[line];
-
-  if (!data) return showChoices();
-
-  choices.innerHTML = "";
-  next.style.display = "block";
-
-  speaker.textContent = data.speaker || "";
-  setBG(data.bg);
-  setSprites(data.sprite);
-  type(data.text);
+function getStory() {
+  return window.STORY;
 }
 
-function setBG(bgKey) {
-  bg.style.backgroundImage = backgrounds[bgKey]
-    ? `url(${backgrounds[bgKey]})`
+/* UI */
+function resetUI() {
+  choicesEl.innerHTML = "";
+  nextBtn.style.display = "block";
+}
+
+/* BACKGROUND */
+function setBackground(key) {
+  bg.style.backgroundImage = backgrounds[key]
+    ? `url("${backgrounds[key]}")`
     : "";
 }
 
+/* SPRITES */
 function setSprites(active) {
-  apollo.src = sprites.apollo;
   cassandra.src = sprites.cassandra;
+  apollo.src = sprites.apollo;
 
-  apollo.style.opacity = active === "apollo" ? "1" : "0.3";
-  cassandra.style.opacity = active === "cassandra" ? "1" : "0.3";
+  cassandra.className = "sprite";
+  apollo.className = "sprite";
+
+  if (active === "cassandra") {
+    cassandra.classList.add("active");
+    apollo.classList.add("inactive");
+  } else if (active === "apollo") {
+    apollo.classList.add("active");
+    cassandra.classList.add("inactive");
+  } else {
+    cassandra.classList.add("inactive");
+    apollo.classList.add("inactive");
+  }
 }
 
-function type(txt) {
-  typing = true;
-  text.textContent = "";
+/* TYPE */
+function type(text) {
+  state.typing = true;
+  textEl.textContent = "";
 
   let i = 0;
 
   function tick() {
-    if (skip) {
-      text.textContent = txt;
-      typing = false;
-      skip = false;
+    if (state.skip) {
+      textEl.textContent = text;
+      state.typing = false;
+      state.skip = false;
       return;
     }
 
-    if (i < txt.length) {
-      text.textContent += txt[i++];
-      setTimeout(tick, 20);
+    if (i < text.length) {
+      textEl.textContent += text[i++];
+      setTimeout(tick, 18);
     } else {
-      typing = false;
+      state.typing = false;
     }
   }
 
   tick();
 }
 
-function nextLine() {
-  if (typing) return skip = true;
+/* RENDER */
+function render() {
+  const story = getStory();
+  const node = story[state.node];
 
-  line++;
-  const scene = window.STORY[node];
+  if (!node) {
+    console.error("Missing node:", state.node);
+    return;
+  }
 
-  if (line >= scene.lines.length) {
-    showChoices();
+  const line = node.lines[state.line];
+
+  resetUI();
+
+  if (!line) return renderChoices();
+
+  nameEl.textContent = line.speaker || "";
+  setBackground(line.bg);
+  setSprites(line.sprite);
+  type(line.text);
+}
+
+/* NEXT */
+function next() {
+  if (state.typing) {
+    state.skip = true;
+    return;
+  }
+
+  const story = getStory();
+  const node = story[state.node];
+
+  state.line++;
+
+  if (state.line >= node.lines.length) {
+    renderChoices();
   } else {
     render();
   }
 }
 
-function showChoices() {
-  const scene = window.STORY[node];
+/* CHOICES */
+function renderChoices() {
+  const story = getStory();
+  const node = story[state.node];
 
-  next.style.display = "none";
+  choicesEl.innerHTML = "";
 
-  scene.choices.forEach(c => {
-    const b = document.createElement("button");
-    b.textContent = c.text;
+  node.choices.forEach(c => {
+    const btn = document.createElement("button");
+    btn.className = "choice-btn";
+    btn.textContent = c.text;
 
-    b.onclick = () => {
-      node = c.next;
-      line = 0;
+    btn.onclick = () => {
+      state.node = c.next;
+      state.line = 0;
+      state.skip = false;
       render();
     };
 
-    choices.appendChild(b);
+    choicesEl.appendChild(btn);
   });
 }
 
-next.onclick = nextLine;
+/* INPUT */
+nextBtn.onclick = next;
 
 document.addEventListener("keydown", e => {
-  if (e.code === "Space" || e.code === "Enter") nextLine();
+  if (e.code === "Space" || e.code === "Enter") {
+    e.preventDefault();
+    next();
+  }
 });
 
-window.onload = () => {
-  document.getElementById("loading").style.display = "none";
-  document.getElementById("game").classList.remove("hidden");
+/* START */
+window.addEventListener("load", () => {
+  cassandra.src = sprites.cassandra;
+  apollo.src = sprites.apollo;
+
+  document.getElementById("loading-screen").style.display = "none";
+  document.getElementById("app").classList.remove("hidden");
 
   render();
-};
+});
