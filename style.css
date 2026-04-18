@@ -4,23 +4,25 @@ body, html {
     width: 100%;
     height: 100%;
     background-color: #000;
-    color: #222; /* Dark text for light box */
+    color: #222;
     font-family: 'Georgia', serif;
     overflow: hidden;
 }
 
 .hidden { display: none !important; }
 
+/* Background - Restored to full opacity */
 #background {
     position: fixed;
     inset: 0;
     background-size: cover;
     background-position: center;
     background-color: #1a1a1a;
-    filter: brightness(0.5); /* Keep BG dark so light box pops */
+    filter: brightness(1.0); /* Removed the dimming/transparency */
     z-index: 1;
 }
 
+/* Sprites */
 #spriteLayer {
     position: fixed;
     inset: 0;
@@ -39,9 +41,10 @@ body, html {
     transition: all 0.5s ease;
 }
 
-.sprite.active { opacity: 1; filter: brightness(1.1); transform: scale(1.02); }
-.sprite.inactive { opacity: 0.5; filter: brightness(0.4) grayscale(0.3); }
+.sprite.active { opacity: 1; transform: scale(1.02); }
+.sprite.inactive { opacity: 0.5; filter: grayscale(0.3); }
 
+/* UI & Dialogue Box */
 #ui {
     position: fixed;
     bottom: 40px;
@@ -54,50 +57,56 @@ body, html {
 #dialogueBox {
     width: 85%;
     max-width: 950px;
-    /* Light Parchment Look */
-    background: rgba(245, 240, 225, 0.95); 
-    border: 4px solid #8e6d1d; /* Darker Gold/Bronze border */
+    background: #f5f0e1; /* Solid Parchment - No transparency */
+    border: 4px solid #8e6d1d;
     border-radius: 15px;
-    padding: 30px;
+    padding: 30px 40px; /* Added more right padding for the sun */
     min-height: 130px;
     position: relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    box-sizing: border-box;
 }
 
 #speakerName {
     font-size: 1.5rem;
-    color: #721c24; /* Deep crimson for the name */
+    color: #721c24;
     margin-bottom: 8px;
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 2px;
-    border-bottom: 1px solid #d4af37;
+    border-bottom: 2px solid #d4af37;
     display: inline-block;
 }
 
 #dialogueText {
     font-size: 1.25rem;
     line-height: 1.6;
-    color: #1a1a1a; /* Very dark grey/black text */
+    color: #1a1a1a;
 }
 
+/* Sun Positioning Fix */
 #bottomBar {
     position: absolute;
-    bottom: -25px;
-    right: 40px;
+    bottom: 10px; /* Keeps it inside the box corner */
+    right: 15px;  /* Keeps it away from the edge */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #nextSun {
-    width: 70px;
-    height: 70px;
+    width: 50px; /* Adjusted size for a better fit */
+    height: 50px;
     cursor: pointer;
-    /* Inverting shadow so it glows dark against the light box */
-    filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); 
     transition: transform 0.2s ease;
+    z-index: 101;
 }
 
-#nextSun:hover { transform: scale(1.1) rotate(15deg); }
+#nextSun:hover { 
+    transform: scale(1.1) rotate(15deg); 
+}
 
+/* Choices Menu */
 .choice-btn {
     display: block;
     width: 100%;
@@ -108,6 +117,7 @@ body, html {
     cursor: pointer;
     font-weight: bold;
     color: #444;
+    font-family: inherit;
     transition: 0.2s;
 }
 
