@@ -3,39 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apollo & Cassandra VN</title>
+    <title>Apollo & Cassandra</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="loading-screen">
-    <img src="assets/sunsprite.png" alt="Loading..." class="pulse" />
-</div>
-
-<div id="app" class="hidden">
-    <div id="background"></div>
-
-    <div id="spriteLayer">
-        <img id="cassandraSprite" class="sprite" alt="Cassandra" />
-        <img id="apolloSprite" class="sprite" alt="Apollo" />
+    <div id="loading-screen">
+        <div class="loader">Loading Prophecy...</div>
     </div>
 
-    <div id="ui">
-        <div id="dialogueBox">
-            <div id="speakerName"></div>
-            <div id="dialogueText"></div>
-            
-            <div id="bottomBar">
-                <div id="choices" class="hidden"></div>
-                <div id="nextBtnContainer">
-                    <img id="nextSun" src="assets/sunsprite.png" alt="Next" />
+    <div id="app" class="hidden">
+        <div id="background"></div>
+
+        <div id="spriteLayer">
+            <img id="cassandraSprite" class="sprite" alt="Cassandra">
+            <img id="apolloSprite" class="sprite" alt="Apollo">
+        </div>
+
+        <div id="ui">
+            <div id="dialogueBox">
+                <div id="speakerName"></div>
+                <div id="dialogueText"></div>
+                
+                <div id="bottomBar">
+                    <div id="choices" class="hidden"></div>
+                    <div id="nextBtnContainer">
+                        <img id="nextSun" src="assets/sunsprite.png" alt="Next">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script src="story.js"></script>
-<script src="script.js"></script>
+    <script src="story.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
