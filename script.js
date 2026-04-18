@@ -1,9 +1,3 @@
-/**
- * Apollo & Cassandra Visual Novel Engine
- * Harmonized for GitHub Pages
- */
-
-// UI Element Selectors
 const bg = document.getElementById("background");
 const cassandra = document.getElementById("cassandraSprite");
 const apollo = document.getElementById("apolloSprite");
@@ -13,7 +7,6 @@ const choicesEl = document.getElementById("choices");
 const nextBtn = document.getElementById("nextSun");
 const nextBtnContainer = document.getElementById("nextBtnContainer");
 
-// Asset Mapping (Matches your GitHub file names)
 const assets = {
     sprites: {
         apollo: "assets/apollo.png",
@@ -25,168 +18,99 @@ const assets = {
     }
 };
 
-// Game State
-let state = {
-    node: "start",
-    line: 0,
-    typing: false,
-    skipText: false
-};
-
-/**
- * CORE FUNCTIONS
- */
-
-function setBackground(key) {
-    if (key && assets.backgrounds[key]) {
-        bg.style.backgroundImage = `url("${assets.backgrounds[key]}")`;
-    }
-}
-
-function setSprites(speakerKey) {
-    // Normalizing keys to lowercase for safety
-    const activeKey = speakerKey ? speakerKey.toLowerCase() : null;
-
-    if (activeKey === "cassandra") {
-        cassandra.classList.add("active");
-        cassandra.classList.remove("inactive");
-        apollo.classList.add("inactive");
-        apollo.classList.remove("active");
-    } else if (activeKey === "apollo") {
-        apollo.classList.add("active");
-        apollo.classList.remove("inactive");
-        cassandra.classList.add("inactive");
-        cassandra.classList.remove("active");
-    } else {
-        // Narration mode: both characters dim
-        cassandra.classList.add("inactive");
-        cassandra.classList.remove("active");
-        apollo.classList.add("inactive");
-        apollo.classList.remove("active");
-    }
-}
-
-function typeEffect(text) {
-    state.typing = true;
-    state.skipText = false;
-    textEl.textContent = "";
-    
-    let i = 0;
-    const speed = 30; // Milliseconds per character
-
-    function nextChar() {
-        if (state.skipText) {
-            textEl.textContent = text;
-            state.typing = false;
-            return;
-        }
-
-        if (i < text.length) {
-            textEl.textContent += text.charAt(i);
-            i++;
-            setTimeout(nextChar, speed);
-        } else {
-            state.typing = false;
-        }
-    }
-    nextChar();
-}
+let state = { node: "start", line: 0, typing: false, skip: false };
 
 function render() {
-    const story = window.STORY;
-    const currentNode = story[state.node];
-    const currentLine = currentNode.lines[state.line];
+    const node = window.STORY[state.node];
+    const line = node.lines[state.line];
 
-    // Reset UI Visibility
     choicesEl.classList.add("hidden");
-    if (nextBtnContainer) nextBtnContainer.classList.remove("hidden");
+    nextBtnContainer.classList.remove("hidden");
 
-    if (!currentLine) return;
-
-    // Update visuals
-    nameEl.textContent = currentLine.speaker || "";
-    if (currentLine.bg) setBackground(currentLine.bg);
-    setSprites(currentLine.sprite || currentLine.speaker);
+    nameEl.textContent = line.speaker || "";
     
-    // Start typing text
-    typeEffect(currentLine.text);
+    // Set Background
+    if (line.bg && assets.backgrounds[line.bg]) {
+        bg.style.backgroundImage = `url('${assets.backgrounds[line.bg]}')`;
+    }
+
+    // Set Sprites
+    const active = line.sprite ? line.sprite.toLowerCase() : "";
+    if (active === "cassandra") {
+        cassandra.className = "sprite active";
+        apollo.className = "sprite inactive";
+    } else if (active === "apollo") {
+        apollo.className = "sprite active";
+        cassandra.className = "sprite inactive";
+    } else {
+        apollo.className = "sprite inactive";
+        cassandra.className = "sprite inactive";
+    }
+
+    typeText(line.text);
+}
+
+function typeText(text) {
+    state.typing = true;
+    textEl.textContent = "";
+    let i = 0;
+    const interval = setInterval(() => {
+        if (state.skip || i >= text.length) {
+            textEl.textContent = text;
+            state.typing = false;
+            state.skip = false;
+            clearInterval(interval);
+        } else {
+            textEl.textContent += text[i];
+            i++;
+        }
+    }, 30);
 }
 
 function handleNext() {
-    // If text is still typing, skip to the end of the line
-    if (state.typing) {
-        state.skipText = true;
-        return;
-    }
-
-    const story = window.STORY;
-    const currentNode = story[state.node];
-
+    if (state.typing) { state.skip = true; return; }
+    
+    const node = window.STORY[state.node];
     state.line++;
 
-    // Check if we reached the end of the current dialogue block
-    if (state.line >= currentNode.lines.length) {
-        if (currentNode.choices && currentNode.choices.length > 0) {
-            displayChoices(currentNode.choices);
+    if (state.line >= node.lines.length) {
+        if (node.choices.length > 0) {
+            showChoices(node.choices);
         } else {
-            // Reached the very end of the script
-            nameEl.textContent = "";
-            textEl.textContent = "The prophecy concludes here.";
-            if (nextBtnContainer) nextBtnContainer.classList.add("hidden");
+            textEl.textContent = "End of Demo.";
         }
     } else {
         render();
     }
 }
 
-function displayChoices(choices) {
-    if (nextBtnContainer) nextBtnContainer.classList.add("hidden");
+function showChoices(choices) {
+    nextBtnContainer.classList.add("hidden");
     choicesEl.classList.remove("hidden");
     choicesEl.innerHTML = "";
-
-    choices.forEach(choice => {
-        const btn = document.createElement("button");
-        btn.className = "choice-btn";
-        btn.textContent = choice.text;
-        btn.onclick = () => {
-            state.node = choice.next;
+    choices.forEach(c => {
+        const b = document.createElement("button");
+        b.className = "choice-btn";
+        b.textContent = c.text;
+        b.onclick = () => {
+            state.node = c.next;
             state.line = 0;
             render();
         };
-        choicesEl.appendChild(btn);
+        choicesEl.appendChild(b);
     });
 }
 
-/**
- * EVENT LISTENERS
- */
-
-// Sunsprite click to advance
 nextBtn.onclick = handleNext;
 
-// Keyboard support (Space/Enter)
-document.addEventListener("keydown", (e) => {
-    if (e.code === "Space" || e.code === "Enter") {
-        e.preventDefault();
-        // Don't advance via keyboard if player must make a choice
-        if (choicesEl.classList.contains("hidden")) {
-            handleNext();
-        }
-    }
-});
-
-// Initialization
-window.addEventListener("load", () => {
-    // Pre-assign sources to ensure images load
+window.onload = () => {
+    // Force image sources
     cassandra.src = assets.sprites.cassandra;
     apollo.src = assets.sprites.apollo;
-
-    // Small delay to hide loading screen smoothly
+    
     setTimeout(() => {
-        const loader = document.getElementById("loading-screen");
-        const app = document.getElementById("app");
-        if (loader) loader.style.display = "none";
-        if (app) app.classList.remove("hidden");
+        document.getElementById("loading-screen").style.display = "none";
+        document.getElementById("app").classList.remove("hidden");
         render();
-    }, 800);
-});
+    }, 500);
+};
