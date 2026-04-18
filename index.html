@@ -2,29 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>VN Clean Build</title>
+  <title>Apollo & Cassandra VN</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<div id="loading">Loading...</div>
+<div id="loading-screen">
+  <img src="assets/sunsprite.png" />
+</div>
 
-<div id="game" class="hidden">
+<div id="app" class="hidden">
 
-  <div id="bg"></div>
+  <div id="background"></div>
 
-  <div id="sprites">
-    <img id="apollo" />
-    <img id="cassandra" />
+  <div id="spriteLayer">
+    <img id="cassandraSprite" class="sprite" />
+    <img id="apolloSprite" class="sprite" />
   </div>
 
   <div id="ui">
-    <div id="speaker"></div>
-    <div id="text"></div>
+    <div id="dialogueBox">
 
-    <div id="choices"></div>
+      <div id="speakerName"></div>
+      <div id="dialogueText"></div>
 
-    <img id="next" src="assets/sunsprite.png">
+      <div id="bottomBar">
+        <div id="choices"></div>
+        <img id="nextSun" src="assets/sunsprite.png" />
+      </div>
+
+    </div>
   </div>
 
 </div>
