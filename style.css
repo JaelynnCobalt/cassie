@@ -10,20 +10,6 @@ body, html {
 
 .hidden { display: none !important; }
 
-/* Loading Screen */
-#loading-screen {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-.pulse { animation: pulse 1.5s infinite; width: 100px; }
-@keyframes pulse {
-    0% { transform: scale(1); opacity: 0.5; }
-    50% { transform: scale(1.1); opacity: 1; }
-    100% { transform: scale(1); opacity: 0.5; }
-}
-
 /* Background */
 #background {
     position: fixed;
@@ -31,11 +17,11 @@ body, html {
     background-size: cover;
     background-position: center;
     transition: background-image 0.8s ease-in-out;
-    filter: brightness(0.6);
+    filter: brightness(0.5); /* Darkened for better contrast */
     z-index: 1;
 }
 
-/* Sprites */
+/* Sprites - FORCED UNIFORM SIZE */
 #spriteLayer {
     position: fixed;
     inset: 0;
@@ -43,28 +29,37 @@ body, html {
     justify-content: space-around;
     align-items: flex-end;
     z-index: 2;
+    padding: 0 10%;
     pointer-events: none;
 }
+
 .sprite {
-    height: 85vh;
-    transition: all 0.4s ease;
-    filter: grayscale(0.5) brightness(0.5);
+    /* This forces both sprites to occupy the same max dimensions */
+    width: 40vw; 
+    height: 80vh;
+    object-fit: contain; /* Ensures the whole image is visible without stretching */
+    transition: all 0.5s ease;
+    filter: brightness(0.4) blur(2px);
     opacity: 0;
+    bottom: 0;
 }
+
 .sprite.active {
-    filter: grayscale(0) brightness(1);
+    filter: brightness(1.1) drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
     opacity: 1;
     transform: scale(1.05);
 }
+
 .sprite.inactive {
-    filter: grayscale(0.8) brightness(0.3);
-    opacity: 0.6;
+    filter: brightness(0.3) grayscale(0.5);
+    opacity: 0.7;
+    transform: scale(1.0);
 }
 
-/* UI & Dialogue */
+/* UI & Dialogue Box - HIGH CONTRAST */
 #ui {
     position: fixed;
-    bottom: 20px;
+    bottom: 30px;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -72,61 +67,76 @@ body, html {
 }
 
 #dialogueBox {
-    width: 80%;
-    max-width: 900px;
-    background: rgba(0, 0, 0, 0.8);
-    border: 2px solid #d4af37;
-    padding: 25px;
+    width: 85%;
+    max-width: 1000px;
+    /* Glassmorphism effect for contrast */
+    background: rgba(15, 15, 15, 0.9); 
+    backdrop-filter: blur(10px); 
+    border: 3px solid #d4af37;
+    border-radius: 8px;
+    padding: 30px;
     color: white;
-    min-height: 120px;
-    position: relative;
+    min-height: 140px;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.2);
 }
 
 #speakerName {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: bold;
-    color: #d4af37;
-    margin-bottom: 10px;
+    color: #ffd700; /* Brighter gold */
+    margin-bottom: 12px;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
+    text-shadow: 2px 2px 4px black;
 }
 
 #dialogueText {
-    font-size: 1.2rem;
-    line-height: 1.5;
-    margin-bottom: 40px;
+    font-size: 1.3rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 2px black;
 }
 
-/* Choices & Next Button */
+/* Next Button & Choices */
 #bottomBar {
     position: absolute;
-    bottom: 10px;
-    right: 20px;
+    bottom: -20px; /* Pulls it slightly out of the box for depth */
+    right: 30px;
+    display: flex;
+    align-items: center;
 }
 
 #nextSun {
-    width: 50px;
+    width: 65px; /* Slightly larger */
+    height: 65px;
     cursor: pointer;
-    transition: 0.3s;
+    filter: drop-shadow(0 0 10px #ffd700);
+    transition: transform 0.3s ease, filter 0.3s ease;
+    background: rgba(0,0,0,0.4);
+    border-radius: 50%;
+    padding: 5px;
 }
-#nextSun:hover { transform: rotate(45deg) scale(1.1); }
 
-#choices {
-    display: flex;
-    gap: 10px;
+#nextSun:hover {
+    transform: rotate(90deg) scale(1.2);
+    filter: drop-shadow(0 0 20px #fff);
 }
 
 .choice-btn {
-    background: #d4af37;
-    border: none;
-    padding: 10px 20px;
+    background: linear-gradient(135deg, #d4af37, #aa8928);
+    border: 1px solid white;
+    padding: 12px 25px;
     color: black;
     font-family: inherit;
     font-weight: bold;
+    font-size: 1.1rem;
     cursor: pointer;
-    transition: 0.2s;
+    border-radius: 4px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
+
 .choice-btn:hover {
     background: white;
-    transform: translateY(-2px);
+    color: #83691a;
+    transform: translateY(-3px);
 }
